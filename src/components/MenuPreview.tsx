@@ -1,17 +1,33 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { ChefHat, Leaf, Wheat } from 'lucide-react';
 import { menuData } from '@/lib/data';
+import type { MenuItem } from '@/types';
 
 export default function MenuPreview() {
-  // Get a sample of items from different categories
-  const featuredItems = [
-    menuData.find(c => c.name === 'Pasta & Risotto')?.items[0], // Carbonara
-    menuData.find(c => c.name === 'Homemade 12" Pizza')?.items[0], // Margherita
-    menuData.find(c => c.name === 'Main Course')?.items[0], // Tagliata
-    menuData.find(c => c.name === 'Starters')?.items[0], // Bruschetta
-  ].filter(Boolean);
+  const [activeCategory, setActiveCategory] = useState('Starters');
+
+  // Map button labels to menu category names
+  const categoryMap: Record<string, string> = {
+    'Starters': 'Starters',
+    'Pasta': 'Pasta & Risotto',
+    'Pizza': 'Homemade 12" Pizza',
+    'Mains': 'Main Course',
+    'Desserts': "Children's Menu", // Using children's menu as placeholder since no desserts category
+  };
+
+  const categories = ['Starters', 'Pasta', 'Pizza', 'Mains', 'Desserts'];
+
+  // Get items for the active category (max 4 items)
+  const getItemsForCategory = (categoryLabel: string): MenuItem[] => {
+    const categoryName = categoryMap[categoryLabel];
+    const category = menuData.find(c => c.name === categoryName);
+    return category?.items.slice(0, 4) || [];
+  };
+
+  const currentItems = getItemsForCategory(activeCategory);
 
   const renderTags = (tags?: ('V' | 'VG' | 'GF')[]) => {
     if (!tags || tags.length === 0) return null;
@@ -72,48 +88,53 @@ export default function MenuPreview() {
           </p>
         </div>
 
-        {/* Featured Items */}
+        {/* Category Buttons */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={`px-5 py-2.5 text-sm transition-all duration-300 ${
+                activeCategory === category
+                  ? 'bg-[#B8860B] text-[#FAF8F0] border border-[#B8860B]'
+                  : 'text-[#FAF8F0]/60 border border-[#FAF8F0]/20 hover:border-[#B8860B] hover:text-[#B8860B]'
+              }`}
+              style={{ fontFamily: 'var(--font-body)' }}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
+        {/* Menu Items Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {featuredItems.map((item, index) => (
+          {currentItems.map((item, index) => (
             <div
-              key={index}
-              className="menu-card bg-[#FAF8F0]/5 backdrop-blur-sm p-6 border border-[#FAF8F0]/10"
+              key={`${activeCategory}-${index}`}
+              className="menu-card bg-[#FAF8F0]/5 backdrop-blur-sm p-6 border border-[#FAF8F0]/10 transition-all duration-300"
             >
               <div className="flex justify-between items-start mb-3">
                 <h3
                   className="text-xl text-[#FAF8F0]"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
-                  {item?.name}
+                  {item.name}
                 </h3>
                 <span
                   className="text-[#B8860B] font-semibold"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
-                  £{item?.price.toFixed(2)}
+                  £{item.price.toFixed(2)}
                 </span>
               </div>
               <p
                 className="text-[#FAF8F0]/60 text-sm leading-relaxed"
                 style={{ fontFamily: 'var(--font-body)' }}
               >
-                {item?.description}
+                {item.description}
               </p>
-              {item?.tags && renderTags(item.tags)}
+              {item.tags && renderTags(item.tags)}
             </div>
-          ))}
-        </div>
-
-        {/* Menu Categories */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {['Starters', 'Pasta', 'Pizza', 'Mains', 'Desserts'].map((category) => (
-            <span
-              key={category}
-              className="px-4 py-2 text-sm text-[#FAF8F0]/60 border border-[#FAF8F0]/20 hover:border-[#B8860B] hover:text-[#B8860B] transition-colors cursor-default"
-              style={{ fontFamily: 'var(--font-body)' }}
-            >
-              {category}
-            </span>
           ))}
         </div>
 
