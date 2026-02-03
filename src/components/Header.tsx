@@ -28,10 +28,10 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? 'bg-[#2C2C2C]/95 backdrop-blur-md shadow-lg py-3'
-          : 'bg-transparent py-5'
+          : 'bg-[#2C2C2C] py-5'
       }`}
     >
       {/* Top bar - Hidden on mobile */}
@@ -120,7 +120,7 @@ export default function Header() {
 
       {/* Mobile Navigation */}
       <div
-        className={`lg:hidden fixed inset-0 top-[72px] bg-[#2C2C2C] transition-all duration-300 ${
+        className={`lg:hidden fixed inset-x-0 top-[72px] bottom-0 bg-[#2C2C2C] transition-all duration-300 ${
           isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
         }`}
       >

@@ -35,8 +35,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-[#FAF8F0] text-[#2C2C2C]">
-        <Header />
+        {/* Announcement banner at the very top, above everything */}
         <AnnouncementBanner announcement={defaultAnnouncement} />
+        <Header />
         <main>{children}</main>
         <Footer />
       </body>
